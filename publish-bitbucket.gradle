@@ -11,7 +11,7 @@ configurations {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    deployLibrary "ar.com.synergian:wagon-git:0.2.0"
+    deployLibrary "ar.com.synergian:wagon-git:0.3.0"
 }
 
 task androidJavadocs(type: Javadoc) {
@@ -61,11 +61,11 @@ uploadArchives {
 
     repositories.mavenDeployer {
         configuration = configurations.deployLibrary
-	repository(url: 'https://api.bitbucket.org/1.0/repositories/wesleydonk/your-bitbucket-repo/raw/your-branch'
-        repository(url: 'git:releases://git@bitbucket.org:' + COMPANY + '/' + REPOSITORY_NAME + '.git') {
-		authentication(userName: USERNAME, 
-                password: PASSWORD)
-	}
+        repository(url: 'https://api.bitbucket.org/1.0/repositories/wesleydonk/your-bitbucket-repo/raw/your-branch'
+            repository(url: 'git:releases://git@bitbucket.org:' + COMPANY + '/' + REPOSITORY_NAME + '.git') {
+            authentication(userName: USERNAME,
+                    password: PASSWORD)
+        }
 
         uniqueVersion = true
 
@@ -93,6 +93,8 @@ def urlExists(String repositoryUrl) {
 
         return (200 == responseCode)
     } catch (IOException ignored) {
+        println(ignored.cause + " " + ignored.message)
+        ignored.printStackTrace()
         return false
     }
 }
