@@ -11,7 +11,7 @@ configurations {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    deployLibrary "ar.com.synergian:wagon-git:0.3.0"
+    deployLibrary "ar.com.synergian:wagon-git:0.3.0”
 }
 
 task androidJavadocs(type: Javadoc) {
@@ -61,11 +61,7 @@ uploadArchives {
 
     repositories.mavenDeployer {
         configuration = configurations.deployLibrary
-        repository(url: 'https://api.bitbucket.org/1.0/repositories/wesleydonk/your-bitbucket-repo/raw/your-branch'
-            repository(url: 'git:releases://git@bitbucket.org:' + COMPANY + '/' + REPOSITORY_NAME + '.git') {
-            authentication(userName: USERNAME,
-                    password: PASSWORD)
-        }
+        repository(url: 'git:releases://git@bitbucket.org:' + COMPANY + '/' + REPOSITORY_NAME + '.git')
 
         uniqueVersion = true
 
@@ -82,7 +78,7 @@ def urlExists(String repositoryUrl) {
 
     try {
         def connection = (HttpURLConnection) new URL(repositoryUrl).openConnection()
-
+        println("b64: " + getBase64EncodedCredentials())
         connection.setRequestProperty("Authorization", "Basic " + getBase64EncodedCredentials())
         connection.setConnectTimeout(10000)
         connection.setReadTimeout(10000)
@@ -90,6 +86,10 @@ def urlExists(String repositoryUrl) {
 
         def responseCode = connection.getResponseCode()
         println("responseCode: " + responseCode)
+
+	      if (responseCode == 401) {
+          throw new RuntimeException("Unauthorized BitBucket user - please provide valid username and password in gradle.properties file")
+        }
 
         return (200 == responseCode)
     } catch (IOException ignored) {
